@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -116,7 +115,12 @@ namespace GogWishlist.classes.controller
             if (String.IsNullOrEmpty(gogData))
                 return new UpdateResponse(UpdateResponse.ResponseType.type_error_response_cache_not_found, null);
 
-            Wishlist wishlist = JsonConvert.DeserializeObject<Wishlist>(gogData);
+            Wishlist wishlist = null;
+            try
+            {
+                wishlist = JsonConvert.DeserializeObject<Wishlist>(gogData);
+            }
+            catch (JsonException e) { }
 
             if (wishlist == null || wishlist.userInfo == null || wishlist.totalPages == 0)
                 return new UpdateResponse(UpdateResponse.ResponseType.type_error_wishlist_data, null);
@@ -128,11 +132,18 @@ namespace GogWishlist.classes.controller
             data = null;
             for (int i = 1; i <= totalPages; ++i)
             {
-                response = await client.DownloadStringTaskAsync(new Uri(String.Format(request_json_format, userId, i)));
+                String url = String.Format(request_json_format, userId, i);
+                response = await client.DownloadStringTaskAsync(new Uri(url));
                 System.Diagnostics.Debug.WriteLine(response);
                 if (String.IsNullOrEmpty(response))
                     continue;
-                Wishlist wishlistPage = JsonConvert.DeserializeObject<Wishlist>(response);
+
+                Wishlist wishlistPage = null;
+                try
+                {
+                    wishlistPage = JsonConvert.DeserializeObject<Wishlist>(response);
+                }
+                catch (JsonException e) { }
                 if (wishlistPage == null || wishlistPage.products == null)
                     continue;
                 if (data == null) data = wishlistPage.products;

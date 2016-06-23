@@ -1,15 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GogWishlist.classes.model
 {
-    public class CustomAttributes
-    {
-        public int xp { get; set; }
-    }
 
     public class Price
     {
@@ -71,7 +64,6 @@ namespace GogWishlist.classes.model
 
     public class Product
     {
-        public CustomAttributes customAttributes { get; set; }
         public Price price { get; set; }
         public bool isDiscounted { get; set; }
         public bool isInDevelopment { get; set; }
